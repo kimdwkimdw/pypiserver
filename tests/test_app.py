@@ -1,7 +1,6 @@
 #! /usr/bin/env py.test
 
 # Builtin imports
-import os
 import pathlib
 import xmlrpc.client as xmlrpclib
 from html import unescape
@@ -10,10 +9,11 @@ from html import unescape
 import pytest
 import webtest
 
+from pypiserver import __main__, _app, bottle_wrapper
+from pypiserver.backend import CachingFileBackend
+
 # Local Imports
 from tests.test_pkg_helpers import files, invalid_files
-from pypiserver import __main__, bottle_wrapper, _app
-from pypiserver.backend import CachingFileBackend
 
 # Enable logging to detect any problems with it
 ##
