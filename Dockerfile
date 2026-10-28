@@ -1,4 +1,10 @@
-FROM python:3.10-alpine3.20 AS base
+FROM python:3.10-alpine3.24 AS base
+
+# Alpine 3.24 ships the CVE-2026-111497 fix; do not inherit stale base packages.
+RUN apk upgrade --no-cache \
+    && if apk info -e brotli-libs >/dev/null 2>&1; then \
+        apk add --upgrade --no-cache "brotli-libs>=1.2.1-r0"; \
+    fi
 
 # Copy the requirements & code and install them
 # Do this in a separate image in a separate directory
@@ -18,7 +24,7 @@ RUN apk add --no-cache --virtual .build-deps \
     && export GNUPGHOME="$(mktemp -d)" \
     && gpg --batch --keyserver hkps://keys.openpgp.org --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 \
     && gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu \
-    && command -v gpgconf && gpgconf --kill all || true \
+    && { if command -v gpgconf >/dev/null; then gpgconf --kill all || true; fi; } \
     && rm -rf "$GNUPGHOME" /usr/local/bin/gosu.asc \
     && chmod +x /usr/local/bin/gosu \
     # check installation

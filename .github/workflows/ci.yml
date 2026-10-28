@@ -49,6 +49,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+      - name: Check Docker signature failure handling
+        run: bash docker/test_signature_guard.sh
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
